@@ -34,7 +34,7 @@ export function Secret5Game() {
   if (game.screen === "final")
     return (
       <>
-        <GameHeader onRestart={() => {}} onExit={() => setModal("exit")} />
+        <GameHeader onExit={() => setModal("exit")} />
         <FinalWord />
         {modal === "exit" && (
           <ExitModal
@@ -53,7 +53,6 @@ export function Secret5Game() {
   return (
     <div className="min-h-screen">
       <GameHeader
-        onRestart={() => setModal("restart")}
         onExit={() => setModal("exit")}
       />
       <Level resetKey={resetKey} onSolved={game.advanceLevel} />

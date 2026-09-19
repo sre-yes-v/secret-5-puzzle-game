@@ -100,7 +100,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       track.pause();
       bgMusic.current = null;
     };
-  }, []);
+  }, [muted]);
   useEffect(() => {
     if (bgMusic.current) bgMusic.current.muted = muted;
   }, [muted]);

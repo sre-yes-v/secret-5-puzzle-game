@@ -2,7 +2,6 @@
 
 import {  useMemo, useState, type DragEvent } from "react";
 import { Check, Grip, ScanLine } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useGame } from "@/context/GameContext";
 
 function shuffleIds(ids: number[], seed: number) {
