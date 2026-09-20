@@ -4,8 +4,10 @@ import { Home, RotateCcw, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGame } from "@/context/GameContext";
 import { formatTime } from "./GameTimer";
+
 export function Results() {
   const game = useGame();
+  const result = game.lastResult;
   return (
     <main className="grid min-h-screen place-items-center px-4 py-10">
       <div className="w-full max-w-4xl text-center">
@@ -17,14 +19,26 @@ export function Results() {
           Mystery solved.
         </h1>
         <p className="mt-5 text-lg text-muted-foreground">
-          Exceptional work, <span className="text-foreground">{game.name}</span>
-          .
+          Exceptional work, <span className="text-foreground">{game.name}</span>.
         </p>
-        <div className="my-10 grid gap-px bg-border border border-border sm:grid-cols-3">
-          <Result label="Secret word" value={game.word}/>
-          <Result label="Puzzles" value="5 / 5" />
-          <Result label="Completion time" value={formatTime(game.elapsed)} />
-        </div>
+        {!result ? (
+          <p className="my-10 text-sm uppercase tracking-[.2em] text-muted-foreground">
+            Recording your time…
+          </p>
+        ) : (
+          <>
+            <div className="my-10 grid gap-px bg-border border border-border sm:grid-cols-3">
+              <Result label="Secret word" value={game.word} />
+              <Result label="This attempt" value={formatTime(result.attempt)} />
+              <Result label="Personal best" value={formatTime(result.time)} />
+            </div>
+            {result.improved && (
+              <p className="mb-6 text-sm font-semibold uppercase tracking-[.18em] text-primary">
+                New personal best!
+              </p>
+            )}
+          </>
+        )}
         <div className="flex flex-wrap justify-center gap-3">
           <Button
             variant="investigate"

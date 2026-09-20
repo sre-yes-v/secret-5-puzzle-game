@@ -2,12 +2,12 @@
 
 import { Medal } from "lucide-react";
 import { formatTime } from "@/components/game/GameTimer";
-import type { Score } from "@/context/GameContext";
+import type { LeaderboardEntry } from "@/lib/api";
 export function LeaderBoardTable({
   scores,
   currentName,
 }: {
-  scores: Score[];
+  scores: LeaderboardEntry[];
   currentName: string;
 }) {
   return (
@@ -36,8 +36,9 @@ export function LeaderBoardTable({
                     String(i + 1).padStart(2, "0")
                   )}
                 </td>
-                <td className="px-5 py-4 text-sm font-semibold text-foreground">
-                  {score.name}
+                <td className="px-5 py-4">
+                  <p className="text-sm font-semibold text-foreground">{score.name}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">{score.email}</p>
                 </td>
                 <td className="px-5 py-4 font-mono text-primary">
                   {formatTime(score.time)}

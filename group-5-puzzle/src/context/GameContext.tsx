@@ -11,6 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import { pickWord, shuffleLetters } from "@/lib/words";
+import { registerPlayer, finishGame, type FinishGameResponse } from "@/lib/api";
 
 export type Screen =
   | "loading"
@@ -24,13 +25,17 @@ export type Screen =
   | "epilogue"
   | "results"
   | "leaderboard";
-export type Score = { name: string; time: number; date: string };
 
 type GameState = {
   screen: Screen;
   setScreen: (screen: Screen) => void;
   name: string;
   setName: (name: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
+  registering: boolean;
+  registerError: string | null;
+  registerPlayerAndContinue: (name: string, email: string) => Promise<void>;
   level: number;
   unlocked: string[];
   word: string;
@@ -38,6 +43,7 @@ type GameState = {
   elapsed: number;
   running: boolean;
   muted: boolean;
+  lastResult: FinishGameResponse | null;
   startGame: () => void;
   finishLevel: () => void;
   advanceLevel: () => void;
@@ -46,20 +52,18 @@ type GameState = {
   goHome: () => void;
   toggleMuted: () => void;
   playSound: (type: "click" | "snap" | "error" | "success") => void;
-  scores: Score[];
 };
 
 const GameContext = createContext<GameState | null>(null);
-const SAMPLE_SCORES: Score[] = [
-  { name: "A. MORROW", time: 196, date: "09.18.26" },
-  { name: "NIGHTJAR", time: 243, date: "09.17.26" },
-  { name: "V. SHAH", time: 271, date: "09.16.26" },
-  { name: "BLUE FOX", time: 318, date: "09.14.26" },
-];
 
 export function GameProvider({ children }: { children: ReactNode }) {
   const [screen, setScreen] = useState<Screen>("loading");
   const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [registering, setRegistering] = useState(false);
+  const [registerError, setRegisterError] = useState<string | null>(null);
+  const [playerId, setPlayerId] = useState<string | null>(null);
+  const [lastResult, setLastResult] = useState<FinishGameResponse | null>(null);
   const [level, setLevel] = useState(1);
   const [unlocked, setUnlocked] = useState<string[]>([]);
   const [puzzle, setPuzzle] = useState<{ word: string; scrambled: string[] }>({
@@ -73,19 +77,10 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const audio = useRef<AudioContext | null>(null);
   const bgMusic = useRef<HTMLAudioElement | null>(null);
 
-  const [scores, setScores] = useState<Score[]>(() => {
-    if (typeof window === "undefined") return SAMPLE_SCORES;
-    try {
-      const stored = window.localStorage.getItem("secret5-scores");
-      if (stored) return [...SAMPLE_SCORES, ...(JSON.parse(stored) as Score[])];
-    } catch { /* ignore invalid local data */ }
-    return SAMPLE_SCORES;
-  });
-
   useEffect(() => {
     const track = new Audio("/audio/audio.mp3");
     track.loop = true;
-    track.volume = 0.20;
+    track.volume = 0.2;
     track.muted = muted;
     bgMusic.current = track;
     const tryPlay = () => {
@@ -139,10 +134,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         oscillator.frequency.value = frequency;
         gain.gain.setValueAtTime(0.0001, now + index * 0.8);
         gain.gain.exponentialRampToValueAtTime(0.09, now + index * 0.8 + 0.01);
-        gain.gain.exponentialRampToValueAtTime(
-          0.0001,
-          now + index * 0.8 + 0.14,
-        );
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + index * 0.8 + 0.14);
         oscillator.connect(gain).connect(ctx.destination);
         oscillator.start(now + index * 0.8);
         oscillator.stop(now + index * 0.8 + 0.16);
@@ -150,60 +142,90 @@ export function GameProvider({ children }: { children: ReactNode }) {
     },
     [muted],
   );
+
+  const registerPlayerAndContinue = useCallback(
+    async (playerName: string, playerEmail: string) => {
+      setRegistering(true);
+      setRegisterError(null);
+      try {
+        const { id } = await registerPlayer(playerName, playerEmail);
+        setPlayerId(id);
+        setName(playerName);
+        setEmail(playerEmail);
+        playSound("click");
+        setScreen("home");
+      } catch (err) {
+        setRegisterError(
+          err instanceof Error ? err.message : "Something went wrong. Try again.",
+        );
+        playSound("error");
+      } finally {
+        setRegistering(false);
+      }
+    },
+    [playSound],
+  );
+
   const startGame = useCallback(() => {
     const word = pickWord(puzzle.word);
     setPuzzle({ word, scrambled: shuffleLetters(word.split(""), word) });
     setLevel(1);
     setUnlocked([]);
     setElapsed(0);
+    setLastResult(null);
     startedAt.current = Date.now();
     setRunning(true);
     setScreen("game");
     playSound("click");
   }, [playSound, puzzle.word]);
+
   const finishLevel = useCallback(() => {
     const letter = puzzle.scrambled[level - 1];
     if (letter) {
-      // Guard on length, not on the letter itself, because words like ALIBI repeat letters.
       setUnlocked((current) =>
         current.length >= level ? current : [...current, letter],
       );
     }
     playSound("success");
   }, [level, puzzle.scrambled, playSound]);
+
   const advanceLevel = useCallback(() => {
     if (level < 5) setLevel((current) => current + 1);
     else setScreen("final");
   }, [level]);
+
   const solve = useCallback(() => {
-    setRunning(false);
-    setScreen("epilogue"); 
-    const score = {
-      name,
-      time: elapsed,
-      date: new Date().toLocaleDateString("en-US", {
-        month: "2-digit",
-        day: "2-digit",
-        year: "2-digit",
-      }),
-    };
-    setScores((current) => [...current, score]);
-    const old = JSON.parse(
-      window.localStorage.getItem("secret5-scores") ?? "[]",
-    ) as Score[];
-    window.localStorage.setItem(
-      "secret5-scores",
-      JSON.stringify([...old, score]),
-    );
-    playSound("success");
-  }, [elapsed, name, playSound]);
+  setRunning(false);
+  setScreen("epilogue");
+  playSound("success");
+  if (playerId) {
+    finishGame(playerId, startedAt.current)   // ← was: new Date(startedAt.current).toISOString()
+      .then((result) => setLastResult(result))
+      .catch(() => {
+        setLastResult({
+          name,
+          time: elapsed,
+          date: new Date().toLocaleDateString("en-US", {
+            month: "2-digit",
+            day: "2-digit",
+            year: "2-digit",
+          }),
+          attempt: 1,
+          improved: false,
+        });
+      });
+  }
+}, [elapsed, name, playSound, playerId]);
+
   const playAgain = useCallback(() => {
     setScreen("instructions");
     setLevel(1);
     setUnlocked([]);
     setElapsed(0);
+    setLastResult(null);
     setRunning(false);
   }, []);
+
   const goHome = useCallback(() => {
     setRunning(false);
     setLevel(1);
@@ -211,12 +233,18 @@ export function GameProvider({ children }: { children: ReactNode }) {
     setElapsed(0);
     setScreen("home");
   }, []);
+
   const value = useMemo(
     () => ({
       screen,
       setScreen,
       name,
       setName,
+      email,
+      setEmail,
+      registering,
+      registerError,
+      registerPlayerAndContinue,
       level,
       unlocked,
       word: puzzle.word,
@@ -224,7 +252,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
       elapsed,
       running,
       muted,
-      scores,
+      lastResult,
       startGame,
       finishLevel,
       advanceLevel,
@@ -237,13 +265,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
     [
       screen,
       name,
+      email,
+      registering,
+      registerError,
+      registerPlayerAndContinue,
       level,
       unlocked,
       puzzle,
       elapsed,
       running,
       muted,
-      scores,
+      lastResult,
       startGame,
       finishLevel,
       advanceLevel,

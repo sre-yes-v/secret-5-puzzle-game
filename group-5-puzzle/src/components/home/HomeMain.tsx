@@ -43,19 +43,29 @@ export function LoadingScreen() {
     </Shell>
   );
 }
+
 export function NameEntry() {
   const game = useGame();
-  const [error, setError] = useState(false);
-  const submit = (e: FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!game.name.trim()) {
-      setError(true);
+    const trimmedName = game.name.trim();
+    const trimmedEmail = game.email.trim();
+    if (!trimmedName) {
+      setError("A name is required to open the case.");
       game.playSound("error");
       return;
     }
-    game.playSound("click");
-    game.setScreen("home");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      setError("Enter a valid email address.");
+      game.playSound("error");
+      return;
+    }
+    setError(null);
+    await game.registerPlayerAndContinue(trimmedName, trimmedEmail);
   };
+
   return (
     <Shell narrow>
       <form
@@ -68,7 +78,7 @@ export function NameEntry() {
           Welcome, detective.
         </h1>
         <p className="mt-4 text-muted-foreground">
-          Enter your field name to open the case.
+          Enter your field name and email to open the case.
         </p>
         <label
           className="mt-9 block text-xs font-bold uppercase tracking-[.16em] text-muted-foreground"
@@ -83,29 +93,48 @@ export function NameEntry() {
           value={game.name}
           onChange={(e) => {
             game.setName(e.target.value);
-            setError(false);
+            setError(null);
           }}
           className="mt-2 h-14 w-full border border-input bg-input/30 px-4 text-lg text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
           placeholder="Enter your name"
         />
-        {error && (
-          <p className="mt-2 text-sm text-destructive">
-            A name is required to open the case.
-          </p>
+        <label
+          className="mt-6 block text-xs font-bold uppercase tracking-[.16em] text-muted-foreground"
+          htmlFor="email"
+        >
+          Email
+        </label>
+        <input
+          id="email"
+          type="email"
+          maxLength={80}
+          value={game.email}
+          onChange={(e) => {
+            game.setEmail(e.target.value);
+            setError(null);
+          }}
+          className="mt-2 h-14 w-full border border-input bg-input/30 px-4 text-lg text-foreground outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20"
+          placeholder="you@example.com"
+        />
+        {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
+        {game.registerError && (
+          <p className="mt-2 text-sm text-destructive">{game.registerError}</p>
         )}
         <Button
           type="submit"
           variant="investigate"
           size="lg"
           className="mt-6 w-full"
+          disabled={game.registering}
         >
-          Continue
+          {game.registering ? "Opening case…" : "Continue"}
           <ArrowRight />
         </Button>
       </form>
     </Shell>
   );
 }
+
 export function HomeMain() {
   const game = useGame();
   return (
