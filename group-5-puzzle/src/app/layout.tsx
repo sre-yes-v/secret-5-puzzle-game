@@ -1,21 +1,43 @@
 import type { Metadata } from "next";
 import "./globals.css";
-
 export const metadata: Metadata = {
-  title: "SECRET5",
+  metadataBase: new URL("https://secret-5.vercel.app/"), 
+
+  title: {
+    default: "SECRET5",
+    template: "%s | SECRET5",
+  },
   description: "Five puzzles. One mystery.",
   authors: [{ name: "SECRET5" }],
+
+  alternates: {
+    canonical: "/",
+  },
+
   openGraph: {
     type: "website",
+    url: "https://secret-5.vercel.app/",
     title: "SECRET5",
     description: "Five puzzles. One mystery.",
+    siteName: "SECRET5",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-image.png", // Recommended aspect ratio: 1200x630 (1.91:1)
+        width: 1200,
+        height: 630,
+        alt: "SECRET5 - Five puzzles. One mystery.",
+      },
+    ],
   },
+
   twitter: {
     card: "summary_large_image",
+    title: "SECRET5",
+    description: "Five puzzles. One mystery.",
+    images: ["/og-image.png"], 
   },
-  icons: {
-    icon: "/favicon.ico",
-  },
+
 };
 
 export const viewport = {
