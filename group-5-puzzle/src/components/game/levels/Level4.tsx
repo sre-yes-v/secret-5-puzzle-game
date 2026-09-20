@@ -9,8 +9,8 @@ export function Level4(p: { resetKey: number; onSolved: () => void }) {
         cols: 4,
         rows: 3,
         letter: "T",
-        title: "The Hidden Chamber",
-        location: "Eastern Vault",
+        title: "Covert Broadcast Relay",
+        location: "Encrypted Storage",
         image: "/puzzles/puzzle-4.jpg",
       }}
       {...p}

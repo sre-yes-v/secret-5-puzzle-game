@@ -9,8 +9,8 @@ export function Level2(p: { resetKey: number; onSolved: () => void }) {
         cols: 3,
         rows: 2,
         letter: "U",
-        title: "The Librarian's Passage",
-        location: "Archive Hall",
+        title: "Behavioral Data Node",
+        location: "Server Archive 02",
         image: "/puzzles/puzzle-2.jpg",
       }}
       {...p}

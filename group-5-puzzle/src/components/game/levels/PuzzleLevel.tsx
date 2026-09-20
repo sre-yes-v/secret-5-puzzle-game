@@ -84,7 +84,7 @@ if (ids !== prevIds) { setPrevIds(ids); setShuffled(shuffleArray(ids)); }
       <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">
-            Case file {String(config.level).padStart(2, "0")} ·{" "}
+            Corrupted File {String(config.level).padStart(2, "0")} ·{" "}
             {config.location}
           </p>
           <h1 className="mt-2 font-display text-3xl text-foreground md:text-5xl">
@@ -93,7 +93,7 @@ if (ids !== prevIds) { setPrevIds(ids); setShuffled(shuffleArray(ids)); }
         </div>
         <div className="flex items-center gap-2 text-xs uppercase tracking-[.16em] text-muted-foreground">
           <ScanLine className="size-4 text-primary" />
-          {placed.length} / {ids.length} fragments secured
+          {placed.length} / {ids.length} sectors restored
         </div>
       </div>
       <div className="grid gap-7 lg:grid-cols-[minmax(0,1fr)_minmax(280px,380px)]">
@@ -141,9 +141,9 @@ if (ids !== prevIds) { setPrevIds(ids); setShuffled(shuffleArray(ids)); }
         <aside className="border border-border bg-card p-5">
           <div className="mb-4 flex items-center justify-between">
             <div>
-              <p className="eyebrow">Evidence tray</p>
+              <p className="eyebrow">Data Buffer</p>
               <h2 className="mt-1 text-sm font-semibold text-foreground">
-                Select or drag a fragment
+                Select or drag a data block
               </h2>
             </div>
             <Grip className="size-5 text-muted-foreground" />
@@ -182,19 +182,19 @@ if (ids !== prevIds) { setPrevIds(ids); setShuffled(shuffleArray(ids)); }
             })}
           </div>
           <p className="mt-5 border-t border-border pt-4 text-xs leading-5 text-muted-foreground">
-            A correct fragment locks in place. Incorrect placements return here.
+            Restored sectors lock into position. Unverified data returns to buffer.
           </p>
         </aside>
       </div>
       {solved && (
         <div className="fixed inset-0 z-40 grid place-items-center bg-overlay p-4">
           <div className="border border-primary bg-card px-12 py-10 text-center shadow-glow animate-scale-in">
-            <p className="eyebrow">Puzzle solved · Letter unlocked</p>
+            <p className="eyebrow">File Restored · Key Letter Unlocked</p>
             <div className="my-4 font-display text-8xl text-primary">
               {letter}
             </div>
             <p className="text-sm text-muted-foreground">
-              Evidence added to your case file
+              Encryption key fragment recovered
             </p>
           </div>
         </div>

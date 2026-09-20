@@ -9,8 +9,8 @@ export function Level5(p: { resetKey: number; onSolved: () => void }) {
         cols: 4,
         rows: 4,
         letter: "E",
-        title: "The Last Vault",
-        location: "Restricted Floor",
+        title: "The Missing Transmission",
+        location: "Restricted Server Node",
         image: "/puzzles/puzzle-5.jpg",
       }}
       {...p}

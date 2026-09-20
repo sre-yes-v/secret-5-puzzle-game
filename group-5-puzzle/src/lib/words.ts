@@ -3,9 +3,9 @@
 // common anagram (TRACE/CRATE, MANGO/AMONG, GHOST/GOTHS), since the player
 // could build the other word and be marked wrong.
 export const WORD_BANK: readonly string[] = [
-  "QUEST", "ALIBI", "CLOAK", "CRIME", "PROOF", "PROBE", "WITCH",
-  "RAVEN", "CROWN", "VAULT", "QUILT", "BRICK", "CLOUD", "PIANO",
-  "JOKER", "KNIFE", "FLAME", "WORLD", "GLYPH", "MIRTH", "ZEBRA",
+  "QUEST", "ALIBI", "CLOAK", "CRIME", "PROOF", "BRAIN", "TRUTH",
+  "IMAGE", "AUDIO", "CROWN", "VAULT", "CYBER", "BRICK", "CLOUD",
+  "LOGIC", "JOKER", "KNIFE", "FLAME", "WORLD", "VOICE", "ERROR",
 ];
 
 /** Random word from the bank, never the same one as `previous`. */

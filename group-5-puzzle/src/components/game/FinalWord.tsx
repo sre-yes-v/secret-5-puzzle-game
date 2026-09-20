@@ -27,12 +27,12 @@ export function FinalWord() {
   return (
     <main className="grid min-h-[calc(100vh-66px)] place-items-center px-4 py-12">
       <div className="w-full max-w-4xl text-center">
-        <p className="eyebrow">Final cipher · All evidence recovered</p>
+        <p className="eyebrow">Final Override · All Images Restored</p>
         <h1 className="mt-4 font-display text-5xl text-foreground md:text-7xl">
-          Name the mystery
+          Decrypt the Key
         </h1>
         <p className="mx-auto mt-4 max-w-xl text-muted-foreground">
-          Rearrange the five recovered letters. The clock is still running.
+          Arrange the 5 recovered key letters to override the system and expose Project NEURO. The clock is still running.
         </p>
         <div className="my-12 grid grid-cols-5 gap-2 md:gap-5">
           {letters.map((letter, index) => (
@@ -53,7 +53,7 @@ export function FinalWord() {
         </div>
         {error && (
           <p className="mb-5 text-sm font-semibold uppercase tracking-[.18em] text-destructive animate-fade-in">
-            Not quite. Rearrange the letters and try again.
+            Access Denied. Incorrect decryption sequence. Rearrange the letters and try again.
           </p>
         )}
         <div className="flex flex-wrap justify-center gap-3">

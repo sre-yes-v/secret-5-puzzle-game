@@ -14,12 +14,12 @@ export function Results() {
         <div className="mx-auto grid size-16 place-items-center border border-primary text-primary">
           <Trophy className="size-7" />
         </div>
-        <p className="eyebrow mt-7">Case closed · 005</p>
+        <p className="eyebrow mt-7">Transmission deciphered · File 005</p>
         <h1 className="mt-3 font-display text-5xl text-foreground md:text-8xl">
-          Mystery solved.
+          Project NEURO: Exposed.
         </h1>
         <p className="mt-5 text-lg text-muted-foreground">
-          Exceptional work, <span className="text-foreground">{game.name}</span>.
+          Exceptional work,The evidence has been released to the public, <span className="text-foreground">{game.name}</span>.
         </p>
         {!result ? (
           <p className="my-10 text-sm uppercase tracking-[.2em] text-muted-foreground">
@@ -28,13 +28,13 @@ export function Results() {
         ) : (
           <>
             <div className="my-10 grid gap-px bg-border border border-border sm:grid-cols-3">
-              <Result label="Secret word" value={game.word} />
-              <Result label="This attempt" value={formatTime(result.attempt)} />
-              <Result label="Personal best" value={formatTime(result.time)} />
+              <Result label="Decrypted key" value={game.word} />
+              <Result label="Decryption time" value={formatTime(result.attempt)} />
+              <Result label="Fastest decryption" value={formatTime(result.time)} />
             </div>
             {result.improved && (
               <p className="mb-6 text-sm font-semibold uppercase tracking-[.18em] text-primary">
-                New personal best!
+                New decryption record!
               </p>
             )}
           </>
@@ -46,7 +46,7 @@ export function Results() {
             onClick={() => game.setScreen("leaderboard")}
           >
             <Trophy />
-            View leaderboard
+            View agent logs (leaderboard)
           </Button>
           <Button variant="outline" size="lg" onClick={game.playAgain}>
             <RotateCcw />

@@ -9,8 +9,8 @@ export function Level3(p: { resetKey: number; onSolved: () => void }) {
         cols: 3,
         rows: 3,
         letter: "Q",
-        title: "The Midnight Laboratory",
-        location: "Sublevel III",
+        title: "Cognitive Manipulation Log",
+        location: "Sublevel III Facility",
         image: "/puzzles/puzzle-3.jpg",
       }}
       {...p}

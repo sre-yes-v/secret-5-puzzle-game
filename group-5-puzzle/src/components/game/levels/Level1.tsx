@@ -9,8 +9,8 @@ export function Level1(p: { resetKey: number; onSolved: () => void }) {
         cols: 2,
         rows: 2,
         letter: "S",
-        title: "The Locked Study",
-        location: "West Wing",
+        title: "Neural Interface Lab",
+        location: "Project NEURO Terminal",
         image: "/puzzles/puzzle-1.jpg",
       }}
       {...p}
