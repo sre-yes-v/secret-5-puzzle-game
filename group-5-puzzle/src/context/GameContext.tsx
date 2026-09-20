@@ -14,12 +14,14 @@ import { pickWord, shuffleLetters } from "@/lib/words";
 
 export type Screen =
   | "loading"
+  | "intro"
   | "name"
   | "home"
   | "briefing"
   | "instructions"
   | "game"
   | "final"
+  | "epilogue"
   | "results"
   | "leaderboard";
 export type Score = { name: string; time: number; date: string };
@@ -106,7 +108,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [muted]);
 
   useEffect(() => {
-    const id = window.setTimeout(() => setScreen("name"), 1700);
+    const id = window.setTimeout(() => setScreen("intro"), 1700);
     return () => window.clearTimeout(id);
   }, []);
   useEffect(() => {
@@ -175,7 +177,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
   }, [level]);
   const solve = useCallback(() => {
     setRunning(false);
-    setScreen("results");
+    setScreen("epilogue"); 
     const score = {
       name,
       time: elapsed,

@@ -20,6 +20,8 @@ import { Results } from "./Results";
 import { LeaderBoardMain } from "@/components/leaderboard/LeaderBoardMain";
 import { RestartModal } from "@/components/modals/RestartModal";
 import { ExitModal } from "@/components/modals/ExitModal";
+import { IntroStory } from "../story/IntroStory";
+import { EpilogueStory } from "@/components/story/EpilogueStory";
 
 const LEVELS = [Level1, Level2, Level3, Level4, Level5];
 export function Secret5Game() {
@@ -27,26 +29,28 @@ export function Secret5Game() {
   const [modal, setModal] = useState<"restart" | "exit" | null>(null);
   const [resetKey, setResetKey] = useState(0);
   if (game.screen === "loading") return <LoadingScreen />;
+  if (game.screen === "intro") return <IntroStory />; 
   if (game.screen === "name") return <NameEntry />;
   if (game.screen === "home") return <HomeMain />;
   if (game.screen === "briefing") return <Briefing />;
   if (game.screen === "instructions") return <Instructions />;
   if (game.screen === "final")
-    return (
-      <>
-        <GameHeader onExit={() => setModal("exit")} />
-        <FinalWord />
-        {modal === "exit" && (
-          <ExitModal
-            onCancel={() => setModal(null)}
-            onConfirm={() => {
-              setModal(null);
-              game.goHome();
-            }}
-          />
-        )}
-      </>
-    );
+  return (
+    <>
+      <GameHeader onExit={() => setModal("exit")} />
+      <FinalWord />
+      {modal === "exit" && (
+        <ExitModal
+          onCancel={() => setModal(null)}
+          onConfirm={() => {
+            setModal(null);
+            game.goHome();
+          }}
+        />
+      )}
+    </>
+  );
+  if (game.screen === "epilogue") return <EpilogueStory />;  
   if (game.screen === "results") return <Results />;
   if (game.screen === "leaderboard") return <LeaderBoardMain />;
   const Level = LEVELS[game.level - 1] ?? Level1;
